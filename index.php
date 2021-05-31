@@ -19,19 +19,12 @@ require 'database.php';
 			</div>
 			<div class="row">
 				<p>
+				<div>
 					<a href="create.php" class="btn btn-success">Agregar un artículo</a>
-					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-					<a href="menuMarca.php" class="btn btn-success">Menú de marcas</a>
-					<a href="menuProveedor.php" class="btn btn-success">Menú de proveedores</a>
-					<a href="menuCategoria.php" class="btn btn-success">Menú de categoría</a>
+					<a style="position: relative; left:30em" href="menuMarca.php" class="btn btn-success">Menú de marcas</a>
+					<a style="position: relative; left:30em" href="menuProveedor.php" class="btn btn-success">Menú de proveedores</a>
+					<a style="position: relative; left:30em" href="menuCategoria.php" class="btn btn-success">Menú de categoría</a>
+				</div>
 				</p>
 				<select class="a-spacing-top-mini" name="sort" id="sort" onchange="this.form.submit();">
 					<option>Ordenar por:</option>
@@ -109,7 +102,7 @@ require 'database.php';
 							echo '<td>' . $row['nombreProveedor'] . '</td>';
 							echo '<div class ="row">';
 							echo '<td width=300>';
-							echo '<a class="btn" href="read.php?id=' . $row['idArticulo'] . '">Detalles</a>';
+							echo '<a class="btn btn-info" href="read.php?id=' . $row['idArticulo'] . '">Detalles</a>';
 							echo '&nbsp;';
 							echo '<a class="btn btn-success" href="update.php?id=' . $row['idArticulo'] . '">Actualizar</a>';
 							echo '&nbsp;';
@@ -123,29 +116,7 @@ require 'database.php';
 					</tbody>
 				</table>
 			</div>
-			<?php
-			// Realizando una consulta SQL
-			$dbconn = pg_connect("host=localhost dbname=proyectoBDApostgres user=postgres password=raptor00")
-			or die('No se ha podido conectar: ' . pg_last_error());
-			$query = 'SELECT * FROM sale';
-			$result = pg_query($query) or die('La consulta fallo: ' . pg_last_error());
-			// Imprimiendo los resultados en HTML
-			echo "<table>\n";
-			while ($line = pg_fetch_array($result, null, PGSQL_ASSOC)) {
-				echo "\t<tr>\n";
-				foreach ($line as $col_value) {
-					echo "\t\t<td>$col_value</td>\n";
-				}
-				echo "\t</tr>\n";
-			}
-			echo "</table>\n";
-
-			// Liberando el conjunto de resultados
-			pg_free_result($result);
-
-			// Cerrando la conexión
-			pg_close($dbconn);
-			?>
+			<a class="btn btn-primary" href="ventas.php">Ir a ventas</a>
 			<h4>
 				Alan Rodrigo Albert Morán
 			</h4>
