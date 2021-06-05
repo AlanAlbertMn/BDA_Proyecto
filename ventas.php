@@ -18,7 +18,7 @@
         <tbody>
         <?php
         // Realizando una consulta SQL
-        $dbconn = pg_connect("host=localhost dbname=proyectoBDApostgres user=postgres password=raptor00")
+        $dbconn = pg_connect("host=localhost dbname=proyectoBDApostgres user=postgres password=password")
             or die('No se ha podido conectar: ' . pg_last_error());
         $query = 'SELECT * FROM sale';
         $result = pg_query($query) or die('La consulta fallo: ' . pg_last_error());
