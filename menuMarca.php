@@ -27,28 +27,25 @@
 
 					<tbody>
 						<?php 
-						include 'database.php';
-						$pdo = Database::connect();
-						$sql = 'SELECT *
-						FROM 
-						marca
-						ORDER BY idMarca';
-						foreach ($pdo->query($sql) as $row) {
+						$dbconn = pg_connect("host=localhost dbname=proyectoBDA user=postgres password=bdapass")
+							or die('No se ha podido conectar: ' . pg_last_error());
+						$query = "SELECT * FROM marca ORDER BY idMarca";
+						$result = pg_query($query) or die('La consulta fallo: ' . pg_last_error());
+						while ($line = pg_fetch_array($result, null)) {
 							echo '<tr>';							   	
-							echo '<td>'. $row['idMarca'] . '</td>';
-							echo '<td>'. $row['nombreMarca'] . '</td>';
+							echo '<td>'. $line[0] . '</td>';
+							echo '<td>'. $line[1] . '</td>';
 							echo '<div class ="row">';
 							echo '<td width=250>';
-							echo '<a class="btn" href="readMarca.php?id='.$row['idMarca'].'">Detalles</a>';
+							echo '<a class="btn" href="readMarca.php?id='.$line[0].'">Detalles</a>';
 							echo '&nbsp;';
-							echo '<a class="btn btn-success" href="updateMarca.php?id='.$row['idMarca'].'">Actualizar</a>';
+							echo '<a class="btn btn-success" href="updateMarca.php?id='.$line[0].'">Actualizar</a>';
 							echo '&nbsp;';
-							echo '<a class="btn btn-danger" href="deleteMarca.php?id='.$row['idMarca'].'">Eliminar</a>';
+							echo '<a class="btn btn-danger" href="deleteMarca.php?id='.$line[0].'">Eliminar</a>';
 							echo '</td>';
 							echo '</div>';
 							echo '</tr>';
 						}
-						Database::disconnect();
 						?>
 					</tbody>
 				</table>
