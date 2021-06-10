@@ -1,5 +1,5 @@
 <?php
-require 'database.php';
+require_once 'database.php';
 ?>
 
 <!DOCTYPE html>
@@ -70,7 +70,6 @@ require 'database.php';
 
 					<tbody>
 						<?php
-						//include 'database.php';
 						$sorting = "idArticulo";
 						$sortMarca = null;
 						if (!empty($_GET['sort'])) {

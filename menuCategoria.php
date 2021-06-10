@@ -29,10 +29,8 @@
 						<?php 
 						include 'database.php';
 						$pdo = Database::connect();
-						$sql = 'SELECT *
-						FROM 
-						categoria
-						ORDER BY idCategoria';
+						$sql = 'SELECT * FROM categoria	ORDER BY idCategoria';
+						
 						foreach ($pdo->query($sql) as $row) {
 							echo '<tr>';							   	
 							echo '<td>'. $row['idCategoria'] . '</td>';
