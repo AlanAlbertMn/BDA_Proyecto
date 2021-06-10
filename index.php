@@ -59,8 +59,8 @@ require 'database.php';
 						<tr>
 							<th>ID</th>
 							<th>Nombre del Artículo</th>
-							<th>Cantidad</th>
 							<th>Precio</th>
+							<th>Cantidad</th>
 							<th>Marca</th>
 							<th>Categoria</th>
 							<th>Proveedor</th>
@@ -79,39 +79,47 @@ require 'database.php';
 						if (!empty($_GET['sortMarca'])) {
 							$sortMarca = $_REQUEST['sortMarca'];
 						}
+						// inicio consulta postgres
+						$dbconn = pg_connect("host=localhost dbname=proyectoBDA user=postgres password=bdapass")
+							or die('No se ha podido conectar: ' . pg_last_error());
+						$query = "SELECT * FROM articulo";
+						$result = pg_query($query) or die('La consulta fallo: ' . pg_last_error());
+
+						// fin consulta postgres e inicio consulta mysql
 
 						$pdo = Database::connect();
-						$sql = "SELECT idArticulo, nombre, cantidad, precioPorUnidad, marca.nombreMarca, 
-						categoria.nombreCategoria, proveedor.nombreProveedor
-							FROM 
-							articulo, marca, categoria, proveedor
-							WHERE 
-							articulo.marca=marca.idMarca AND 
-							articulo.categoria=categoria.idCategoria AND
-							articulo.proveedor=proveedor.idProveedor
-							ORDER BY " . $sorting . "";
+						$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+						$sql = "SELECT idArticulo, nombre, precioPorUnidad FROM articulo";
+						$q = $pdo->prepare($sql);
+						$q->execute(array());
+						$data = $q->fetch(PDO::FETCH_BOTH);
+						Database::disconnect();
 
-						foreach ($pdo->query($sql) as $row) {
+						// ORDER BY " . $sorting . "";
+						// fin consulta mysql
+						while ($line = pg_fetch_array($result, null)) {
 							echo '<tr>';
-							echo '<td>' . $row['idArticulo'] . '</td>';
-							echo '<td>' . $row['nombre'] . '</td>';
-							echo '<td>' . $row['cantidad'] . '</td>';
-							echo '<td>' . '$' . $row['precioPorUnidad'] . '</td>';
-							echo '<td>' . $row['nombreMarca'] . '</td>';
-							echo '<td>' . $row['nombreCategoria'] . '</td>';
-							echo '<td>' . $row['nombreProveedor'] . '</td>';
+							echo '<td>' . $line[0] . '</td>';
+							echo '<td>' . $data['nombre'] . '</td>';
+							echo '<td>' . $data['precioPorUnidad'] . '</td>';
+							echo '<td>' . $line[1] . '</td>';
+							echo '<td>' . $line[2] . '</td>';
+							echo '<td>' . $line[3] . '</td>';
+							echo '<td>' . $line[4] . '</td>';
+							// echo '<td>' . $line['nombreCategoria'] . '</td>';
+							// echo '<td>' . $line['nombreProveedor'] . '</td>';
 							echo '<div class ="row">';
 							echo '<td width=300>';
-							echo '<a class="btn btn-info" href="read.php?id=' . $row['idArticulo'] . '">Detalles</a>';
+							echo '<a class="btn btn-info" href="read.php?id=' . $line[0] . '">Detalles</a>';
 							echo '&nbsp;';
-							echo '<a class="btn btn-success" href="update.php?id=' . $row['idArticulo'] . '">Actualizar</a>';
+							echo '<a class="btn btn-success" href="update.php?id=' . $line[0] . '">Actualizar</a>';
 							echo '&nbsp;';
-							echo '<a class="btn btn-danger" href="delete.php?id=' . $row['idArticulo'] . '">Eliminar</a>';
+							echo '<a class="btn btn-danger" href="delete.php?id=' . $line[0] . '">Eliminar</a>';
 							echo '</td>';
 							echo '</div>';
 							echo '</tr>';
+							$data = $q->fetch(PDO::FETCH_BOTH);
 						}
-						Database::disconnect();
 						?>
 					</tbody>
 				</table>

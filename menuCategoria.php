@@ -27,7 +27,7 @@
 
 					<tbody>
 						<?php 
-						include 'database.php';
+						include_once 'database.php';
 						$pdo = Database::connect();
 						$sql = 'SELECT *
 						FROM 
