@@ -16,11 +16,8 @@ nombreMarca varchar(25),
 PRIMARY KEY (idMarca)
 );
 
-
 CREATE TABLE articulo (
 idArticulo varchar(20) NOT NULL,
-nombre varchar(30) NOT NULL,
-precioPorUnidad int NOT NULL,
 cantidad int CHECK (cantidad > 0),
 marca int,
 proveedor int,
@@ -169,4 +166,4 @@ INSERT INTO articulo VALUES
 ("FD4D012R9", "FT B9E042T FIBRA OPTICA 12 HILOS INT/EXT MULTIMODO OM4", 1, 389.34, 10, 4, 5);
 
 -- test inserts
-INSERT INTO articulo VALUES ("1", "Martillo", 1,1,1,1,1);
+INSERT INTO articulo VALUES ("1",1,1,1,1);
