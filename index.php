@@ -81,7 +81,7 @@ require 'database.php';
 						}
 
 						$pdo = Database::connect();
-						$sql = "SELECT idArticulo, nombre, cantidad, precioPorUnidad, marca.nombreMarca, 
+						$sql = "SELECT idArticulo, cantidad, marca.nombreMarca, 
 						categoria.nombreCategoria, proveedor.nombreProveedor
 							FROM 
 							articulo, marca, categoria, proveedor
@@ -91,12 +91,21 @@ require 'database.php';
 							articulo.proveedor=proveedor.idProveedor
 							ORDER BY " . $sorting . "";
 
+						//inicio consulta postgres
+
+						$dbconn = pg_connect("host=localhost dbname=proyectoBDA user=postgres password=bdapass")
+							or die('No se ha podido conectar: ' . pg_last_error());
+						$query = "SELECT * FROM articulo";
+						$result = pg_query($query) or die('La consulta fallo: ' . pg_last_error());
+
+						// fin consulta postgres
 						foreach ($pdo->query($sql) as $row) {
+							$line = pg_fetch_array($result, null);
 							echo '<tr>';
 							echo '<td>' . $row['idArticulo'] . '</td>';
-							echo '<td>' . $row['nombre'] . '</td>';
+							echo '<td>' . $line['nombre'] . '</td>'; //resultado de postgres
 							echo '<td>' . $row['cantidad'] . '</td>';
-							echo '<td>' . '$' . $row['precioPorUnidad'] . '</td>';
+							echo '<td>' . '$' . $line['precioporunidad'] . '</td>'; //resultado de postgres
 							echo '<td>' . $row['nombreMarca'] . '</td>';
 							echo '<td>' . $row['nombreCategoria'] . '</td>';
 							echo '<td>' . $row['nombreProveedor'] . '</td>';
