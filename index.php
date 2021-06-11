@@ -26,20 +26,10 @@ require_once 'database.php';
 					<a style="position: relative; left:30em" href="menuCategoria.php" class="btn btn-success">Menú de categoría</a>
 				</div>
 				</p>
-				<select class="a-spacing-top-mini" name="sort" id="sort" onchange="this.form.submit();">
-					<option>Ordenar por:</option>
-					<option value="idArticulo">ID: alfábeticamente A-Z</option>
-					<option value="nombre">Nombre: alfábeticamente A-Z</option>
-					<option value="marca asc">Marca: alfábeticamente A-Z</option>
-					<option value="marca desc">Marca: alfábeticamente Z-A</option>
-					<option value="categoria asc">Categoría: alfábeticamente A-Z</option>
-					<option value="categoria desc">Categoría: alfábeticamente Z-A</option>
-					<option value="proveedor asc">Proveedor: alfábeticamente A-Z</option>
-					<option value="proveedor desc">Proveedor: alfábeticamente Z-A</option>
-					<option value="precioPorUnidad">Precio: de más bajo a más alto</option>
-					<option value="precioPorUnidad desc">Precio: de más alto a más bajo</option>
-					<option value="cantidad">Cantidad: de más baja a más alta</option>
-				</select>
+				<!-- <select class="a-spacing-top-mini" name="sort" id="sort" onchange="this.form.submit();">
+					
+				</select> -->
+				<input type="text" placeholder="ID de articulo a buscar" name="find" id="find" onchange="this.form.submit();">
 				<table class="table table-striped table-bordered">
 					<thead>
 						<tr>
@@ -48,42 +38,49 @@ require_once 'database.php';
 							<th>Cantidad</th>
 							<th>Precio</th>
 							<th>Marca</th>
-							<th>Categoria</th>
 							<th>Proveedor</th>
+							<th>Categoria</th>
 							<th>Detalles</th>
 						</tr>
 					</thead>
 
 					<tbody>
 						<?php
-						$sorting = "idArticulo";
-						$sortMarca = null;
-						if (!empty($_GET['sort'])) {
-							$sorting = $_REQUEST['sort'];
-						}
-						if (!empty($_GET['sortMarca'])) {
-							$sortMarca = $_REQUEST['sortMarca'];
-						}
+						$finding = "";
+						if (!empty($_GET['find'])) {
+							$finding = $_REQUEST['find'];
+							$pdo = Database::connect();
+							$sql = "CALL findArticle($finding)";
 
-						$pdo = Database::connect();
-						$sql = "SELECT idArticulo, cantidad, marca.nombreMarca, 
-						categoria.nombreCategoria, proveedor.nombreProveedor
+							//inicio consulta postgres
+
+							$dbconn = pg_connect("host=localhost dbname=proyectoBDA user=postgres password=bdapass")
+								or die('No se ha podido conectar: ' . pg_last_error());
+							$query = "SELECT * FROM articulo WHERE idArticulo = '$finding'";
+							$result = pg_query($query) or die('La consulta fallo: ' . pg_last_error());
+
+							// fin consulta postgres
+						} else {
+							$pdo = Database::connect();
+							$sql = "SELECT idArticulo, cantidad, marca.nombreMarca, 
+							categoria.nombreCategoria, proveedor.nombreProveedor
 							FROM 
 							articulo, marca, categoria, proveedor
 							WHERE 
 							articulo.marca=marca.idMarca AND 
 							articulo.categoria=categoria.idCategoria AND
 							articulo.proveedor=proveedor.idProveedor
-							ORDER BY " . $sorting . "";
+							ORDER BY idArticulo";
 
-						//inicio consulta postgres
+							//inicio consulta postgres
 
-						$dbconn = pg_connect("host=localhost dbname=proyectoBDA user=postgres password=bdapass")
-							or die('No se ha podido conectar: ' . pg_last_error());
-						$query = "SELECT * FROM articulo";
-						$result = pg_query($query) or die('La consulta fallo: ' . pg_last_error());
+							$dbconn = pg_connect("host=localhost dbname=proyectoBDA user=postgres password=bdapass")
+								or die('No se ha podido conectar: ' . pg_last_error());
+							$query = "SELECT * FROM articulo";
+							$result = pg_query($query) or die('La consulta fallo: ' . pg_last_error());
 
-						// fin consulta postgres
+							// fin consulta postgres
+						}
 						foreach ($pdo->query($sql) as $row) {
 							$line = pg_fetch_array($result, null);
 							echo '<tr>';

@@ -172,13 +172,25 @@ INSERT INTO articulo VALUES
 ("NORTH 105-BKL", "PZ ORGANIZADOR HORIZONTAL 1UR SENCILLO 19 PULG DUCTO1.5 PULGX2 PULG", 1, 207.9, 10, 4, 5),
 ("FD4D012R9", "FT B9E042T FIBRA OPTICA 12 HILOS INT/EXT MULTIMODO OM4", 1, 389.34, 10, 4, 5);
 
-SET GLOBAL event_scheduler = ON;
-
 -- Stored procedure
 DELIMITER $$
 CREATE PROCEDURE findArticle(IN idArt CHAR(20))
 BEGIN
-SELECT * from articulo where idArticulo = idArt;
+SELECT idArticulo, cantidad, marca.nombreMarca, categoria.nombreCategoria, proveedor.nombreProveedor
+FROM 
+articulo, marca, categoria, proveedor
+WHERE 
+articulo.marca=marca.idMarca AND 
+articulo.categoria=categoria.idCategoria AND
+articulo.proveedor=proveedor.idProveedor AND
+idArticulo = idArt;
+END$$
+DELIMITER ;
+
+DELIMITER $$
+CREATE PROCEDURE getMarcas()
+BEGIN
+SELECT * FROM marca;
 END$$
 DELIMITER ;
 

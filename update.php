@@ -193,7 +193,7 @@ if (!empty($_POST)) {
 							<option value="">Selecciona una marca</option>
 							<?php
 							$pdo = Database::connect();
-							$query = 'SELECT * FROM marca';
+							$query = 'CALL getMarcas';
 							foreach ($pdo->query($query) as $row) {
 								if ($row['idMarca'] == $marca)
 									echo "<option selected value='" . $row['idMarca'] . "'>" . $row['nombreMarca'] . "</option>";
@@ -205,29 +205,6 @@ if (!empty($_POST)) {
 						</select>
 						<?php if (($marcError) != null) ?>
 						<span class="help-inline"><?php echo $marcError; ?></span>
-					</div>
-				</div>
-
-
-				<div class="control-group <?php echo !empty($catError) ? 'error' : ''; ?>">
-					<label class="control-label">Categoria</label>
-					<div class="controls">
-						<select name="categoria">
-							<option value="">Selecciona una categoria</option>
-							<?php
-							$pdo = Database::connect();
-							$query = 'SELECT * FROM categoria';
-							foreach ($pdo->query($query) as $row) {
-								if ($row['idCategoria'] == $cat)
-									echo "<option selected value='" . $row['idCategoria'] . "'>" . $row['nombreCategoria'] . "</option>";
-								else
-									echo "<option value='" . $row['idCategoria'] . "'>" . $row['nombreCategoria'] . "</option>";
-							}
-							Database::disconnect();
-							?>
-						</select>
-						<?php if (($catError) != null) ?>
-						<span class="help-inline"><?php echo $catError; ?></span>
 					</div>
 				</div>
 
@@ -252,6 +229,30 @@ if (!empty($_POST)) {
 						<span class="help-inline"><?php echo $provError; ?></span>
 					</div>
 				</div>
+
+				
+				<div class="control-group <?php echo !empty($catError) ? 'error' : ''; ?>">
+					<label class="control-label">Categoria</label>
+					<div class="controls">
+						<select name="categoria">
+							<option value="">Selecciona una categoria</option>
+							<?php
+							$pdo = Database::connect();
+							$query = 'SELECT * FROM categoria';
+							foreach ($pdo->query($query) as $row) {
+								if ($row['idCategoria'] == $cat)
+									echo "<option selected value='" . $row['idCategoria'] . "'>" . $row['nombreCategoria'] . "</option>";
+								else
+									echo "<option value='" . $row['idCategoria'] . "'>" . $row['nombreCategoria'] . "</option>";
+							}
+							Database::disconnect();
+							?>
+						</select>
+						<?php if (($catError) != null) ?>
+						<span class="help-inline"><?php echo $catError; ?></span>
+					</div>
+				</div>
+				
 				<div class="form-actions">
 					<button type="submit" class="btn btn-success">Actualizar</button>
 					<a class="btn" href="index.php">Regresar</a>
