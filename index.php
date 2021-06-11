@@ -40,20 +40,6 @@ require_once 'database.php';
 					<option value="precioPorUnidad desc">Precio: de más alto a más bajo</option>
 					<option value="cantidad">Cantidad: de más baja a más alta</option>
 				</select>
-				<select name="sortMarca" id="sortMarca" onchange="this.form.submit();">
-					<option value="">Seleccione filtro de marca</option>
-					<?php
-					$pdo = Database::connect();
-					$query = 'SELECT * FROM marca';
-					foreach ($pdo->query($query) as $row) {
-						if ($row['idMarca'] == $marca)
-							echo "<option selected value='" . $row['idMarca'] . "'>" . $row['nombreMarca'] . "</option>";
-						else
-							echo "<option value='" . $row['idMarca'] . "'>" . $row['nombreMarca'] . "</option>";
-					}
-					Database::disconnect();
-					?>
-				</select>
 				<table class="table table-striped table-bordered">
 					<thead>
 						<tr>
@@ -124,7 +110,7 @@ require_once 'database.php';
 					</tbody>
 				</table>
 			</div>
-			<a class="btn btn-primary" href="ventas.php">Ir a ventas</a>
+			<a class="btn btn-primary" href="compras.php">Ir a compras</a>
 			<h4>
 				Alan Rodrigo Albert Morán
 			</h4>
