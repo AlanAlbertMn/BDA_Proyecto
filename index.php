@@ -1,5 +1,5 @@
 <?php
-require 'database.php';
+require_once 'database.php';
 ?>
 
 <!DOCTYPE html>
@@ -19,47 +19,17 @@ require 'database.php';
 			</div>
 			<div class="row">
 				<p>
+				<div>
 					<a href="create.php" class="btn btn-success">Agregar un artículo</a>
-					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-					<a href="menuMarca.php" class="btn btn-success">Menú de marcas</a>
-					<a href="menuProveedor.php" class="btn btn-success">Menú de proveedores</a>
-					<a href="menuCategoria.php" class="btn btn-success">Menú de categoría</a>
+					<a style="position: relative; left:30em" href="menuMarca.php" class="btn btn-success">Menú de marcas</a>
+					<a style="position: relative; left:30em" href="menuProveedor.php" class="btn btn-success">Menú de proveedores</a>
+					<a style="position: relative; left:30em" href="menuCategoria.php" class="btn btn-success">Menú de categoría</a>
+				</div>
 				</p>
-				<select class="a-spacing-top-mini" name="sort" id="sort" onchange="this.form.submit();">
-					<option>Ordenar por:</option>
-					<option value="idDeArticulo">ID: alfábeticamente A-Z</option>
-					<option value="articulo-nombre">Nombre: alfábeticamente A-Z</option>
-					<option value="marca-nombre">Marca: alfábeticamente A-Z</option>
-					<option value="marca-nombre-desc">Marca: alfábeticamente Z-A</option>
-					<option value="categoria-nombre">Categoría: alfábeticamente A-Z</option>
-					<option value="proveedor-nombre">Proveedor: alfábeticamente A-Z</option>
-					<option value="proveedor-nombre-desc">Proveedor: alfábeticamente Z-A</option>
-					<option value="precio-menor-mayor">Precio: de más bajo a más alto</option>
-					<option value="precio-mayor-menor">Precio: de más alto a más bajo</option>
-					<option value="cantidad-menor-mayor">Cantidad: de más baja a más alta</option>
-				</select>
-				<select name="sortMarca" id="sortMarca" onchange="this.form.submit();">
-					<option value="">Seleccione filtro de marca</option>
-					<?php
-					$pdo = Database::connect();
-					$query = 'SELECT * FROM marca';
-					foreach ($pdo->query($query) as $row) {
-						if ($row['idMarca'] == $marca)
-							echo "<option selected value='" . $row['idMarca'] . "'>" . $row['nombreMarca'] . "</option>";
-						else
-							echo "<option value='" . $row['idMarca'] . "'>" . $row['nombreMarca'] . "</option>";
-					}
-					Database::disconnect();
-					?>
-				</select>
+				<!-- <select class="a-spacing-top-mini" name="sort" id="sort" onchange="this.form.submit();">
+					
+				</select> -->
+				<input type="text" placeholder="ID de articulo a buscar" name="find" id="find" onchange="this.form.submit();">
 				<table class="table table-striped table-bordered">
 					<thead>
 						<tr>
@@ -68,237 +38,62 @@ require 'database.php';
 							<th>Cantidad</th>
 							<th>Precio</th>
 							<th>Marca</th>
-							<th>Categoria</th>
 							<th>Proveedor</th>
+							<th>Categoria</th>
 							<th>Detalles</th>
 						</tr>
 					</thead>
 
 					<tbody>
 						<?php
-						//include 'database.php';
-						$sorting = null;
-						$sortMarca = null;
-						if (!empty($_GET['sort'])) {
-							$sorting = $_REQUEST['sort'];
-						}
-						if (!empty($_GET['sortMarca'])) {
-							$sortMarca = $_REQUEST['sortMarca'];
-						}
+						$finding = "";
+						if (!empty($_GET['find'])) {
+							$finding = $_REQUEST['find'];
+							$pdo = Database::connect();
+							$sql = "CALL findArticle($finding)";
 
-						$pdo = Database::connect();
-						if ($sorting == 'marca-nombre') {
-							$sql = 'SELECT idArticulo, nombre, cantidad, precioPorUnidad, marca.nombreMarca, categoria.nombreCategoria, proveedor.nombreProveedor
-							FROM 
-							articulo, marca, categoria, proveedor
-							WHERE 
-							articulo.marca=marca.idMarca AND 
-							articulo.categoria=categoria.idCategoria AND
-							articulo.proveedor=proveedor.idProveedor
-							ORDER BY nombreMarca';
-						} else if ($sorting == 'precio-mayor-menor') {
-							$sql = 'SELECT idArticulo, nombre, cantidad, precioPorUnidad, marca.nombreMarca, categoria.nombreCategoria, proveedor.nombreProveedor
-							FROM 
-							articulo, marca, categoria, proveedor
-							WHERE 
-							articulo.marca=marca.idMarca AND 
-							articulo.categoria=categoria.idCategoria AND
-							articulo.proveedor=proveedor.idProveedor
-							ORDER BY precioPorUnidad DESC';
-						} else if ($sorting == 'marca-nombre-desc') {
-							$sql = 'SELECT idArticulo, nombre, cantidad, precioPorUnidad, marca.nombreMarca, categoria.nombreCategoria, proveedor.nombreProveedor
-							FROM 
-							articulo, marca, categoria, proveedor
-							WHERE 
-							articulo.marca=marca.idMarca AND 
-							articulo.categoria=categoria.idCategoria AND
-							articulo.proveedor=proveedor.idProveedor
-							ORDER BY nombreMarca DESC';
-						} else if ($sorting == 'articulo-nombre') {
-							$sql = 'SELECT idArticulo, nombre, cantidad, precioPorUnidad, marca.nombreMarca, categoria.nombreCategoria, proveedor.nombreProveedor
-							FROM 
-							articulo, marca, categoria, proveedor
-							WHERE 
-							articulo.marca=marca.idMarca AND 
-							articulo.categoria=categoria.idCategoria AND
-							articulo.proveedor=proveedor.idProveedor
-							ORDER BY nombre';
-						} else if ($sorting == 'precio-menor-mayor') { //ordenar menor a mayor el precio
-							$sql = 'SELECT idArticulo, nombre, cantidad, precioPorUnidad, marca.nombreMarca, categoria.nombreCategoria, proveedor.nombreProveedor
-							FROM 
-							articulo, marca, categoria, proveedor
-							WHERE 
-							articulo.marca=marca.idMarca AND 
-							articulo.categoria=categoria.idCategoria AND
-							articulo.proveedor=proveedor.idProveedor
-							ORDER BY precioPorUnidad';
-						} else if ($sorting == 'categoria-nombre') {
-							$sql = 'SELECT idArticulo, nombre, cantidad, precioPorUnidad, marca.nombreMarca, categoria.nombreCategoria, proveedor.nombreProveedor
-							FROM 
-							articulo, marca, categoria, proveedor
-							WHERE 
-							articulo.marca=marca.idMarca AND 
-							articulo.categoria=categoria.idCategoria AND
-							articulo.proveedor=proveedor.idProveedor
-							ORDER BY nombreCategoria';
-						} else if ($sorting == 'cantidad-menor-mayor') {
-							$sql = 'SELECT idArticulo, nombre, cantidad, precioPorUnidad, marca.nombreMarca, categoria.nombreCategoria, proveedor.nombreProveedor
-							FROM 
-							articulo, marca, categoria, proveedor
-							WHERE 
-							articulo.marca=marca.idMarca AND 
-							articulo.categoria=categoria.idCategoria AND
-							articulo.proveedor=proveedor.idProveedor
-							ORDER BY cantidad';
-						} else if ($sorting == 'idDeArticulo') {
-							$sql = 'SELECT idArticulo, nombre, cantidad, precioPorUnidad, marca.nombreMarca, categoria.nombreCategoria, proveedor.nombreProveedor
-							FROM 
-							articulo, marca, categoria, proveedor
-							WHERE 
-							articulo.marca=marca.idMarca AND 
-							articulo.categoria=categoria.idCategoria AND
-							articulo.proveedor=proveedor.idProveedor
-							ORDER BY idArticulo';
-						} else if ($sorting == 'proveedor-nombre') {
-							$sql = 'SELECT idArticulo, nombre, cantidad, precioPorUnidad, marca.nombreMarca, categoria.nombreCategoria, proveedor.nombreProveedor
-							FROM 
-							articulo, marca, categoria, proveedor
-							WHERE 
-							articulo.marca=marca.idMarca AND 
-							articulo.categoria=categoria.idCategoria AND
-							articulo.proveedor=proveedor.idProveedor
-							ORDER BY nombreProveedor';
-						} else if ($sorting == 'proveedor-nombre-desc') {
-							$sql = 'SELECT idArticulo, nombre, cantidad, precioPorUnidad, marca.nombreMarca, categoria.nombreCategoria, proveedor.nombreProveedor
-							FROM 
-							articulo, marca, categoria, proveedor
-							WHERE 
-							articulo.marca=marca.idMarca AND 
-							articulo.categoria=categoria.idCategoria AND
-							articulo.proveedor=proveedor.idProveedor
-							ORDER BY nombreProveedor DESC';
-						} else if ($sortMarca == '1') {
-							$sql = 'SELECT idArticulo, nombre, cantidad, precioPorUnidad, marca.nombreMarca, categoria.nombreCategoria, proveedor.nombreProveedor
-							FROM
-							articulo, marca, categoria, proveedor
-							where
-							articulo.marca=marca.idMarca AND 
-							articulo.categoria=categoria.idCategoria AND
-							articulo.proveedor=proveedor.idProveedor and
-							marca.nombreMarca="Nacobre"';
-						} else if ($sortMarca == '2') {
-							$sql = 'SELECT idArticulo, nombre, cantidad, precioPorUnidad, marca.nombreMarca, categoria.nombreCategoria, proveedor.nombreProveedor
-							FROM 
-							articulo, marca, categoria, proveedor
-							where
-							articulo.marca=marca.idMarca AND 
-							articulo.categoria=categoria.idCategoria AND
-							articulo.proveedor=proveedor.idProveedor and
-							marca.nombreMarca="Tuboplus"';
-						} else if ($sortMarca == '3') {
-							$sql = 'SELECT idArticulo, nombre, cantidad, precioPorUnidad, marca.nombreMarca, categoria.nombreCategoria, proveedor.nombreProveedor
-							FROM 
-							articulo, marca, categoria, proveedor
-							where
-							articulo.marca=marca.idMarca AND 
-							articulo.categoria=categoria.idCategoria AND
-							articulo.proveedor=proveedor.idProveedor and
-							marca.nombreMarca="Urrea"';
-						} else if ($sortMarca == '4') {
-							$sql = 'SELECT idArticulo, nombre, cantidad, precioPorUnidad, marca.nombreMarca, categoria.nombreCategoria, proveedor.nombreProveedor
-							FROM 
-							articulo, marca, categoria, proveedor
-							where
-							articulo.marca=marca.idMarca AND 
-							articulo.categoria=categoria.idCategoria AND
-							articulo.proveedor=proveedor.idProveedor and
-							marca.nombreMarca="Partner projects"';
-						} else if ($sortMarca == '5') {
-							$sql = 'SELECT idArticulo, nombre, cantidad, precioPorUnidad, marca.nombreMarca, categoria.nombreCategoria, proveedor.nombreProveedor
-							FROM 
-							articulo, marca, categoria, proveedor
-							where
-							articulo.marca=marca.idMarca AND 
-							articulo.categoria=categoria.idCategoria AND
-							articulo.proveedor=proveedor.idProveedor and
-							marca.nombreMarca="Condumex"';
-						} else if ($sortMarca == '6') {
-							$sql = 'SELECT idArticulo, nombre, cantidad, precioPorUnidad, marca.nombreMarca, categoria.nombreCategoria, proveedor.nombreProveedor
-							FROM 
-							articulo, marca, categoria, proveedor
-							where
-							articulo.marca=marca.idMarca AND 
-							articulo.categoria=categoria.idCategoria AND
-							articulo.proveedor=proveedor.idProveedor and
-							marca.nombreMarca="Retail"';
-						} else if ($sortMarca == '7') {
-							$sql = 'SELECT idArticulo, nombre, cantidad, precioPorUnidad, marca.nombreMarca, categoria.nombreCategoria, proveedor.nombreProveedor
-							FROM 
-							articulo, marca, categoria, proveedor
-							where
-							articulo.marca=marca.idMarca AND 
-							articulo.categoria=categoria.idCategoria AND
-							articulo.proveedor=proveedor.idProveedor and
-							marca.nombreMarca="Comscope"';
-						} else if ($sortMarca == '8') {
-							$sql = 'SELECT idArticulo, nombre, cantidad, precioPorUnidad, marca.nombreMarca, categoria.nombreCategoria, proveedor.nombreProveedor
-							FROM 
-							articulo, marca, categoria, proveedor
-							where
-							articulo.marca=marca.idMarca AND 
-							articulo.categoria=categoria.idCategoria AND
-							articulo.proveedor=proveedor.idProveedor and
-							marca.nombreMarca="Tangit"';
-						} else if ($sortMarca == '9') {
-							$sql = 'SELECT idArticulo, nombre, cantidad, precioPorUnidad, marca.nombreMarca, categoria.nombreCategoria, proveedor.nombreProveedor
-							FROM 
-							articulo, marca, categoria, proveedor
-							where
-							articulo.marca=marca.idMarca AND 
-							articulo.categoria=categoria.idCategoria AND
-							articulo.proveedor=proveedor.idProveedor and
-							marca.nombreMarca="Charofil"';
-						} else if ($sortMarca == '10') {
-							$sql = 'SELECT idArticulo, nombre, cantidad, precioPorUnidad, marca.nombreMarca, categoria.nombreCategoria, proveedor.nombreProveedor
-							FROM 
-							articulo, marca, categoria, proveedor
-							where
-							articulo.marca=marca.idMarca AND 
-							articulo.categoria=categoria.idCategoria AND
-							articulo.proveedor=proveedor.idProveedor and
-							marca.nombreMarca="North System"';
-						} else if ($sortMarca == '11') {
-							$sql = 'SELECT idArticulo, nombre, cantidad, precioPorUnidad, marca.nombreMarca, categoria.nombreCategoria, proveedor.nombreProveedor
-							FROM 
-							articulo, marca, categoria, proveedor
-							where
-							articulo.marca=marca.idMarca AND 
-							articulo.categoria=categoria.idCategoria AND
-							articulo.proveedor=proveedor.idProveedor and
-							marca.nombreMarca="3M"';
+							//inicio consulta postgres
+
+							$dbconn = pg_connect("host=localhost dbname=proyectoBDA user=postgres password=bdapass")
+								or die('No se ha podido conectar: ' . pg_last_error());
+							$query = "SELECT * FROM articulo WHERE idArticulo = '$finding'";
+							$result = pg_query($query) or die('La consulta fallo: ' . pg_last_error());
+
+							// fin consulta postgres
 						} else {
-							$sql = 'SELECT idArticulo, nombre, cantidad, precioPorUnidad, marca.nombreMarca, categoria.nombreCategoria, proveedor.nombreProveedor
+							$pdo = Database::connect();
+							$sql = "SELECT idArticulo, cantidad, marca.nombreMarca, 
+							categoria.nombreCategoria, proveedor.nombreProveedor
 							FROM 
 							articulo, marca, categoria, proveedor
 							WHERE 
 							articulo.marca=marca.idMarca AND 
 							articulo.categoria=categoria.idCategoria AND
 							articulo.proveedor=proveedor.idProveedor
-							ORDER BY idArticulo';
-						}
+							ORDER BY idArticulo";
 
+							//inicio consulta postgres
+
+							$dbconn = pg_connect("host=localhost dbname=proyectoBDA user=postgres password=bdapass")
+								or die('No se ha podido conectar: ' . pg_last_error());
+							$query = "SELECT * FROM articulo";
+							$result = pg_query($query) or die('La consulta fallo: ' . pg_last_error());
+
+							// fin consulta postgres
+						}
 						foreach ($pdo->query($sql) as $row) {
+							$line = pg_fetch_array($result, null);
 							echo '<tr>';
 							echo '<td>' . $row['idArticulo'] . '</td>';
-							echo '<td>' . $row['nombre'] . '</td>';
+							echo '<td>' . $line['nombre'] . '</td>'; //resultado de postgres
 							echo '<td>' . $row['cantidad'] . '</td>';
-							echo '<td>' . '$' . $row['precioPorUnidad'] . '</td>';
+							echo '<td>' . '$' . $line['precioporunidad'] . '</td>'; //resultado de postgres
 							echo '<td>' . $row['nombreMarca'] . '</td>';
 							echo '<td>' . $row['nombreCategoria'] . '</td>';
 							echo '<td>' . $row['nombreProveedor'] . '</td>';
 							echo '<div class ="row">';
 							echo '<td width=300>';
-							echo '<a class="btn" href="read.php?id=' . $row['idArticulo'] . '">Detalles</a>';
+							echo '<a class="btn btn-info" href="read.php?id=' . $row['idArticulo'] . '">Detalles</a>';
 							echo '&nbsp;';
 							echo '<a class="btn btn-success" href="update.php?id=' . $row['idArticulo'] . '">Actualizar</a>';
 							echo '&nbsp;';
@@ -312,6 +107,7 @@ require 'database.php';
 					</tbody>
 				</table>
 			</div>
+			<a class="btn btn-primary" href="compras.php">Ir a compras</a>
 			<h4>
 				Alan Rodrigo Albert Morán
 			</h4>

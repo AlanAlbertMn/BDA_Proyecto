@@ -29,10 +29,8 @@
 						<?php 
 						include 'database.php';
 						$pdo = Database::connect();
-						$sql = 'SELECT *
-						FROM 
-						proveedor
-						ORDER BY idProveedor';
+						$sql = 'SELECT * FROM proveedor	ORDER BY idProveedor';
+						
 						foreach ($pdo->query($sql) as $row) {
 							echo '<tr>';							   	
 							echo '<td>'. $row['idProveedor'] . '</td>';
