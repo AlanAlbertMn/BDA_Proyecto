@@ -10,5 +10,5 @@ nombre varchar(30) NOT NULL,
 precioPorUnidad int NOT NULL
 );
 
--- tets inserts
+-- test inserts
 INSERT INTO articulo VALUES ('1','Martillo', 1);
